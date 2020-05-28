@@ -14,7 +14,7 @@ public class MapDestroyer : NetworkBehaviour {
 	[SyncVar]
 	bool globalFlag = false;
 	
-	bool localFlag;
+	bool localFlag = false;
 
 	public Tilemap tilemap;
 
@@ -24,11 +24,7 @@ public class MapDestroyer : NetworkBehaviour {
 
 	public GameObject explosionPrefab;
 
-	void Start()
-	{
-		localFlag = globalFlag;
-	}
-	
+
 	void Update()
 	{
 		if(globalFlag != localFlag)
