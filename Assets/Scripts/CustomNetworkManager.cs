@@ -18,6 +18,9 @@ public class CustomNetworkManager : NetworkManager
     public void clearTilemapCells()
     {
         List<Vector3Int> prevBombLocations = FindObjectOfType<MapDestroyer>().prevBombLocations;
+        
+        Debug.Log(string.Format("bombs: {0}", prevBombLocations.Count));
+
         foreach(Vector3Int pos in prevBombLocations)
         {
             tilemap.SetTile(pos, null);
