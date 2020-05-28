@@ -11,7 +11,9 @@ public class MapDestroyer : NetworkBehaviour {
 	[SyncVar]
 	float destroyY;
 	[SyncVar]
-	bool isExplosion;
+	bool globalFlag = false;
+
+	bool localFlag = false;
 
 	public Tilemap tilemap;
 
@@ -22,7 +24,7 @@ public class MapDestroyer : NetworkBehaviour {
 
 	void Update()
 	{
-		if(isExplosion)
+		if(globalFlag != localFlag)
 		{
 			Vector3 originCell = new Vector3(destroyX, destroyY, 0);
 			ExplodeCell(originCell);
@@ -42,7 +44,7 @@ public class MapDestroyer : NetworkBehaviour {
 			{
 				ExplodeCell(originCell + new Vector3(0, -2, 0));
 			}
-			isExplosion = false;
+			localFlag = globalFlag;
 		}
 		
 	}
@@ -59,7 +61,7 @@ public class MapDestroyer : NetworkBehaviour {
 			{
 				destroyX = originCell.x;
 				destroyY = originCell.y;
-				isExplosion = true;
+				globalFlag = !globalFlag;
 			}
 
 			CmdSpawnExplosion(originCell);

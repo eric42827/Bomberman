@@ -255,7 +255,13 @@ MonoBehaviour:
   matchSize: 4
   isNetworkActive: 0
   matchMaker: {fileID: 0}
-  tilemap: {fileID: 1675035018}
+  tilemap: {fileID: 437330535}
+--- !u!1839735485 &437330535 stripped
+Tilemap:
+  m_CorrespondingSourceObject: {fileID: 7303048199725546906, guid: 145b2aa592403497d941064854f1efb0,
+    type: 3}
+  m_PrefabInstance: {fileID: 7303048199288348669}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &966687971
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,12 +538,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1839735485 &1675035018 stripped
-Tilemap:
-  m_CorrespondingSourceObject: {fileID: 7303048197741764215, guid: 145b2aa592403497d941064854f1efb0,
-    type: 3}
-  m_PrefabInstance: {fileID: 7303048199288348669}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7303048199288348669
 PrefabInstance:
   m_ObjectHideFlags: 0
