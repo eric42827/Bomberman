@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     Vector2 movement;
     public Tilemap tilemap;
 	public GameObject bombPrefab;
-
+    Vector3 playerPos;
     // Update is called once per frame
     void Update()
     {
@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
         movement.y = Input.GetAxisRaw("Vertical");
         if (Input.GetKeyDown("space"))
 		{
-			Vector3 playerPos = rb.position;
+			playerPos = rb.position;
 			Vector3Int cell = tilemap.WorldToCell(playerPos);
 			Vector3 cellCenterPos = tilemap.GetCellCenterWorld(cell);
 
