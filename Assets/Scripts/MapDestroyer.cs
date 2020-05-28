@@ -92,6 +92,11 @@ public class MapDestroyer : NetworkBehaviour {
 		if (tile == destructibleTile)
 		{
 			tilemap.SetTile(floor_cell, null);
+			// ADDED
+			if(isServer)
+			{
+				prevBombLocations.Add(new Vector3Int(floor_cell.x, floor_cell.y, 0));
+			}
 		}
 		return true;
 	}

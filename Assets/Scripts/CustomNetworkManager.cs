@@ -18,6 +18,9 @@ public class CustomNetworkManager : NetworkManager
     public void clearTilemapCells()
     {
         List<Vector3Int> prevBombLocations = FindObjectOfType<MapDestroyer>().prevBombLocations;
+        
+        Debug.Log(string.Format("bombs: {0}", prevBombLocations.Count));
+
         foreach(Vector3Int pos in prevBombLocations)
         {
             tilemap.SetTile(pos, null);
@@ -51,8 +54,9 @@ public class CustomNetworkManager : NetworkManager
         //int idx = chosenIdx;
         Debug.Log(idx);
         player.GetComponent<Player>().spriteIdx = idx;
-        player.GetComponent<DropBomb>().tilemap = tilemap;
+        // ADDED
         clearTilemapCells(); // clear tilemap cells at previous bomb locations
+        player.GetComponent<DropBomb>().tilemap = tilemap;
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
     }
 }
