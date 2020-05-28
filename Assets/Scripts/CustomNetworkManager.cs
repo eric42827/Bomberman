@@ -40,6 +40,7 @@ public class CustomNetworkManager : NetworkManager
         int idx = message.chosenIdx;
 
         GameObject player;
+
         Transform startPos = GetStartPosition(); // TODO: change spawn position.
         if (startPos != null)
         {
@@ -55,7 +56,7 @@ public class CustomNetworkManager : NetworkManager
         Debug.Log(idx);
         player.GetComponent<Player>().spriteIdx = idx;
         // ADDED
-        clearTilemapCells(); // clear tilemap cells at previous bomb locations
+        // clearTilemapCells(); // clear tilemap cells at previous bomb locations
         player.GetComponent<DropBomb>().tilemap = tilemap;
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
     }
