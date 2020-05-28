@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Networking;
 
+
 public class MapDestroyer : NetworkBehaviour {
 
 	[SyncVar]
@@ -12,13 +13,14 @@ public class MapDestroyer : NetworkBehaviour {
 	float destroyY;
 	[SyncVar]
 	bool globalFlag = false;
-
+	
 	bool localFlag = false;
 
 	public Tilemap tilemap;
 
 	public Tile wallTile;
 	public Tile destructibleTile;
+	public List<Vector3Int> prevBombLocations; // 
 
 	public GameObject explosionPrefab;
 
@@ -62,6 +64,7 @@ public class MapDestroyer : NetworkBehaviour {
 				destroyX = originCell.x;
 				destroyY = originCell.y;
 				globalFlag = !globalFlag;
+				prevBombLocations.Add(new Vector3Int((int)destroyX, (int)destroyY, 0));
 			}
 
 			CmdSpawnExplosion(originCell);
