@@ -64,8 +64,9 @@ public class MapDestroyer : NetworkBehaviour {
 				destroyX = originCell.x;
 				destroyY = originCell.y;
 				globalFlag = !globalFlag;
-				prevBombLocations.Add(new Vector3Int((int)destroyX, (int)destroyY, 0));
 			}
+
+			prevBombLocations.Add(new Vector3Int((int)destroyX, (int)destroyY, 0));
 
 			CmdSpawnExplosion(originCell);
 			CmdSpawnExplosion(originCell + new Vector3(1, 0, 0));
