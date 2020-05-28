@@ -54,6 +54,7 @@ public class CustomNetworkManager : NetworkManager
         //int idx = chosenIdx;
         Debug.Log(idx);
         player.GetComponent<Player>().spriteIdx = idx;
+        // ADDED
         clearTilemapCells(); // clear tilemap cells at previous bomb locations
         player.GetComponent<DropBomb>().tilemap = tilemap;
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
