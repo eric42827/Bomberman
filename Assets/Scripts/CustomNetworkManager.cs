@@ -1,16 +1,34 @@
-﻿using UnityEngine;
-using UnityEngine.Networking;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Networking;
 
 public class CustomNetworkManager : NetworkManager
 {
     public Tilemap tilemap;
-    public int numSprites = 4;
+    private int numSprites = 10;
+    private int chosenIdx;
 
-    public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
+    public class NetworkMessage: MessageBase
     {
+        public int chosenIdx;
+    }
+
+    public override void OnClientConnect(NetworkConnection conn)
+    {
+        NetworkMessage message = new NetworkMessage();
+        message.chosenIdx = chosenIdx;
+        ClientScene.AddPlayer(conn, 0, message);
+    }
+
+    public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId, NetworkReader extraMessageReader)
+    {
+        NetworkMessage message = extraMessageReader.ReadMessage<NetworkMessage>();
+        int idx = message.chosenIdx;
+
         GameObject player;
-        Transform startPos = GetStartPosition();
+        Transform startPos = GetStartPosition(); // TODO: change spawn position.
         if (startPos != null)
         {
             player = (GameObject)Instantiate(playerPrefab, startPos.position, startPos.rotation);
@@ -19,10 +37,13 @@ public class CustomNetworkManager : NetworkManager
         {
             player = (GameObject)Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         }
-        int idx = Random.Range(0, numSprites - 1);
+
+        idx = Random.Range(0, numSprites - 1); // TODO: choose player
+        //int idx = chosenIdx;
         Debug.Log(idx);
         player.GetComponent<Player>().spriteIdx = idx;
         player.GetComponent<DropBomb>().tilemap = tilemap;
+
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
     }
 }

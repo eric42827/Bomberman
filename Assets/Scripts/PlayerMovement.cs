@@ -6,7 +6,8 @@ using UnityEngine.Networking;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    public float moveSpeed = 5f;
+    private float moveSpeed = 10f;
+
     public Rigidbody2D rb;
     Vector2 movement;
 

@@ -10,9 +10,13 @@ class Player : NetworkBehaviour
     private SpriteRenderer spriteRenderer;
 
     public List<Sprite> sprites;
-    public int numSprites = 4;
+    public int numSprites = 10;
     
-    
+    void Start()
+    {
+        Debug.Log(spriteIdx);
+        GetComponent<SpriteRenderer>().sprite = sprites[spriteIdx]; // important!
+    }
 
     [SyncVar(hook = nameof(OnSpriteIndexChanged))]
     public int spriteIdx = -1;
