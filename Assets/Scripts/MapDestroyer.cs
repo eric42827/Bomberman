@@ -55,7 +55,6 @@ public class MapDestroyer : MonoBehaviour {
 
 		Vector3 pos = tilemap.GetCellCenterWorld(cell);
 		Instantiate(explosionPrefab, pos, Quaternion.identity);
-
 		return true;
 	}
 
