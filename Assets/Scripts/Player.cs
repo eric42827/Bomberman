@@ -18,6 +18,14 @@ class Player : NetworkBehaviour
         GetComponent<SpriteRenderer>().sprite = sprites[spriteIdx]; // important!
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        Camera.main.GetComponent<CameraFollow>().setTarget(gameObject.transform);
+        Debug.Log("Start local player");
+        HealthBar healthBar = GameObject.Find("Canvas").transform.GetChild(0).GetComponent<HealthBar>();
+        this.gameObject.GetComponent<PlayerDamage>().healthBar = healthBar;
+    }
+    
     [SyncVar(hook = nameof(OnSpriteIndexChanged))]
     public int spriteIdx = -1;
 

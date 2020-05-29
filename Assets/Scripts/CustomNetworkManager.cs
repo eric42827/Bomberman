@@ -26,7 +26,8 @@ public class CustomNetworkManager : NetworkManager
             tilemap.SetTile(pos, null);
         }
     }
-
+    
+    //public override void On
     public override void OnClientConnect(NetworkConnection conn)
     {
         NetworkMessage message = new NetworkMessage();
