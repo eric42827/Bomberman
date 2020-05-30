@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class PlayerDamage : MonoBehaviour
+using UnityEngine.Networking;
+
+public class PlayerDamage : NetworkBehaviour
 {
     public int maxHealth = 10;
     public int currentHealth;
@@ -24,12 +26,23 @@ public class PlayerDamage : MonoBehaviour
         if (healthBar.GetHealth() <= 0)
         {
             //Debug.Log("Dead");
-            Destroy(gameObject);
+            CmdDestroyPlayer();
+            
         }
     }
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         healthBar.SetHealth(currentHealth);
+    }
+
+    [Command]
+    void CmdDestroyPlayer()
+    {
+        if(NetworkServer.active)
+        {
+            Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
+        }
     }
 }
