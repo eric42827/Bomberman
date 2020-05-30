@@ -11,23 +11,18 @@ public class PlayerDamage : NetworkBehaviour
     public HealthBar healthBar;
     public HealthBar healthBarFollow;
     // Start is called before the first frame update
+
     void Start()
     {
+        currentHealth = maxHealth;
         if(this.isLocalPlayer)
         {
-            Debug.Log("Starting player damage");
-            currentHealth = maxHealth;
             healthBar.SetMaxHealth(maxHealth);
-
-            Debug.Log(transform.GetChild(0));
-            transform.GetChild(0).gameObject.SetActive(false);
-            //healthBarFollow = transform.GetChild(0).transform.GetChild(0).GetComponent<HealthBar>();
-            //healthBarFollow.SetMaxHealth(maxHealth);
+            transform.GetChild(0).gameObject.SetActive(false); // disable healthbar canvas for local
         }
         // Health bar follow
         else
         {
-            currentHealth = maxHealth;
             healthBarFollow = transform.GetChild(0).transform.GetChild(0).GetComponent<HealthBar>();
             healthBarFollow.SetMaxHealth(maxHealth);
         }
@@ -54,7 +49,6 @@ public class PlayerDamage : NetworkBehaviour
         {
             currentHealth -= damage;
             healthBar.SetHealth(currentHealth);
-            //healthBarFollow.SetHealth(currentHealth);
         }
         else
         {
