@@ -17,7 +17,7 @@ public class DestroyExplosion : NetworkBehaviour
     {
         if(NetworkServer.active)
         {
-            Destroy (this.gameObject, this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length + delay); 
+            Destroy(this.gameObject, this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length + delay); 
             //NetworkServer.Destroy(this.gameObject);
         }
     }
