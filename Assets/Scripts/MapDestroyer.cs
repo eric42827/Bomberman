@@ -2,46 +2,88 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Networking;
 
-public class MapDestroyer : MonoBehaviour {
+
+public class MapDestroyer : NetworkBehaviour {
+
+	[SyncVar]
+	float destroyX;
+	[SyncVar]
+	float destroyY;
+	[SyncVar]
+	bool globalFlag = false;
+	
+	bool localFlag = false;
 
 	public Tilemap tilemap;
 
 	public Tile wallTile;
 	public Tile destructibleTile;
+	public List<Vector3Int> prevBombLocations; // 
 
 	public GameObject explosionPrefab;
 
-	public void Explode(Vector2 worldPos)
+
+	void Update()
 	{
-		Vector3Int originCell = tilemap.WorldToCell(worldPos);
-
-		ExplodeCell(originCell);
-		if (ExplodeCell(originCell + new Vector3Int(1, 0, 0)))
+		if(globalFlag != localFlag)
 		{
-			ExplodeCell(originCell + new Vector3Int(2, 0, 0));
+			Vector3 originCell = new Vector3(destroyX, destroyY, 0);
+			ExplodeCell(originCell);
+			if(ExplodeCell(originCell + new Vector3(1, 0, 0)))
+			{
+				ExplodeCell(originCell + new Vector3(2, 0, 0));
+			}
+			if(ExplodeCell(originCell + new Vector3(0, 1, 0))) 
+			{
+				ExplodeCell(originCell + new Vector3(0, 2, 0));
+			}
+			if(ExplodeCell(originCell + new Vector3(-1, 0, 0))) 
+			{
+				ExplodeCell(originCell + new Vector3(-2, 0, 0));
+			}
+			if(ExplodeCell(originCell + new Vector3(0, -1, 0))) 
+			{
+				ExplodeCell(originCell + new Vector3(0, -2, 0));
+			}
+			localFlag = globalFlag;
 		}
 		
-		if (ExplodeCell(originCell + new Vector3Int(0, 1, 0)))
-		{
-			ExplodeCell(originCell + new Vector3Int(0, 2, 0));
-		}
-		
-		if (ExplodeCell(originCell + new Vector3Int(-1, 0, 0)))
-		{
-			ExplodeCell(originCell + new Vector3Int(-2, 0, 0));
-		}
-		
-		if (ExplodeCell(originCell + new Vector3Int(0, -1, 0)))
-		{
-			ExplodeCell(originCell + new Vector3Int(0, -2, 0));
-		}
-
 	}
 
-	bool ExplodeCell (Vector3Int cell)
+	[Command]
+	public void CmdExplode(Vector2 worldPos)
 	{
-		Tile tile = tilemap.GetTile<Tile>(cell);
+		if(NetworkServer.active)
+		{
+			Debug.Log("Inside CmdExplode");
+			Vector3 originCell = tilemap.WorldToCell(worldPos);
+
+			if(isServer)
+			{
+				destroyX = originCell.x;
+				destroyY = originCell.y;
+				globalFlag = !globalFlag;
+				prevBombLocations.Add(new Vector3Int((int)destroyX, (int)destroyY, 0));
+			}
+
+			CmdSpawnExplosion(originCell);
+			CmdSpawnExplosion(originCell + new Vector3(1, 0, 0));
+			CmdSpawnExplosion(originCell + new Vector3(2, 0, 0));
+			CmdSpawnExplosion(originCell + new Vector3(0, 1, 0));
+			CmdSpawnExplosion(originCell + new Vector3(0, 2, 0));
+			CmdSpawnExplosion(originCell + new Vector3(-1, 0, 0));
+			CmdSpawnExplosion(originCell + new Vector3(-2, 0, 0));
+			CmdSpawnExplosion(originCell + new Vector3(0, -1, 0));
+			CmdSpawnExplosion(originCell + new Vector3(0, -2, 0));
+		}
+	}
+	
+	bool ExplodeCell(Vector3 cell)
+	{
+		Vector3Int floor_cell = Vector3Int.FloorToInt(cell);
+		Tile tile = tilemap.GetTile<Tile>(floor_cell);
 
 		if (tile == wallTile)
 		{
@@ -50,12 +92,26 @@ public class MapDestroyer : MonoBehaviour {
 
 		if (tile == destructibleTile)
 		{
-			tilemap.SetTile(cell, null);
+			tilemap.SetTile(floor_cell, null);
+			// ADDED
+			if(isServer)
+			{
+				prevBombLocations.Add(new Vector3Int(floor_cell.x, floor_cell.y, 0));
+			}
 		}
-
-		Vector3 pos = tilemap.GetCellCenterWorld(cell);
-		Instantiate(explosionPrefab, pos, Quaternion.identity);
 		return true;
+	}
+
+	[Command]
+	void CmdSpawnExplosion (Vector3 cell)
+	{
+		Vector3Int floor_cell = Vector3Int.FloorToInt(cell);
+		Vector3 pos = tilemap.GetCellCenterWorld(floor_cell);
+		Tile tile = tilemap.GetTile<Tile>(floor_cell);
+
+		GameObject explosion = Instantiate(explosionPrefab, pos, Quaternion.identity) as GameObject;
+		NetworkServer.Spawn(explosion);
+		return;
 	}
 
 }
