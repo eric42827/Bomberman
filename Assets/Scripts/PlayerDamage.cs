@@ -12,8 +12,12 @@ public class PlayerDamage : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
+        if(this.isLocalPlayer)
+        {
+            Debug.Log("Starting player damage");
+            currentHealth = maxHealth;
+            healthBar.SetMaxHealth(maxHealth);
+        }
     }
 
     // Update is called once per frame
@@ -23,7 +27,7 @@ public class PlayerDamage : NetworkBehaviour
         {
             TakeDamage(1);
         }*/
-        if (healthBar.GetHealth() <= 0)
+        if (this.isLocalPlayer && healthBar.GetHealth() <= 0)
         {
             //Debug.Log("Dead");
             CmdDestroyPlayer();
@@ -32,8 +36,11 @@ public class PlayerDamage : NetworkBehaviour
     }
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
-        healthBar.SetHealth(currentHealth);
+        if(this.isLocalPlayer)
+        {
+            currentHealth -= damage;
+            healthBar.SetHealth(currentHealth);
+        }
     }
 
     [Command]

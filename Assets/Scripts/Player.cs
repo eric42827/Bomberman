@@ -14,7 +14,6 @@ class Player : NetworkBehaviour
     
     void Start()
     {
-        Debug.Log(spriteIdx);
         GetComponent<SpriteRenderer>().sprite = sprites[spriteIdx]; // important!
     }
 
