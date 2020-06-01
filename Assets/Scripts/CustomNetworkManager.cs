@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 public class CustomNetworkManager : NetworkManager
 {
     public Tilemap tilemap;
+    public int numPlayers = 0;
     private int numSprites = 10;
     private int chosenIdx;
 
@@ -14,7 +15,7 @@ public class CustomNetworkManager : NetworkManager
     {
         public int chosenIdx;
     }
-
+    
     public void clearTilemapCells()
     {
         List<Vector3Int> prevBombLocations = FindObjectOfType<MapDestroyer>().prevBombLocations;
@@ -60,5 +61,7 @@ public class CustomNetworkManager : NetworkManager
         // clearTilemapCells(); // clear tilemap cells at previous bomb locations
         player.GetComponent<DropBomb>().tilemap = tilemap;
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
+        numPlayers += 1;
+        Debug.Log(string.Format("Num players: {0}", numPlayers));
     }
 }
