@@ -15,6 +15,7 @@ class Player : NetworkBehaviour
     void Start()
     {
         GetComponent<SpriteRenderer>().sprite = sprites[spriteIdx]; // important!
+        GetComponent<DropBomb>().tilemap = FindObjectOfType<MapDestroyer>().tilemap;
     }
 
     public override void OnStartLocalPlayer()
@@ -22,7 +23,8 @@ class Player : NetworkBehaviour
         Camera.main.GetComponent<CameraFollow>().setTarget(gameObject.transform);
         Debug.Log("Start local player");
         HealthBar healthBar = GameObject.Find("Canvas").transform.GetChild(0).GetComponent<HealthBar>();
-        this.gameObject.GetComponent<PlayerDamage>().healthBar = healthBar;
+        GetComponent<PlayerDamage>().healthBar = healthBar;
+        //GetComponent<DropBomb>().tilemap = FindObjectOfType<MapDestroyer>().tilemap;
     }
     
     [SyncVar(hook = nameof(OnSpriteIndexChanged))]

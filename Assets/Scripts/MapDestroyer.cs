@@ -25,6 +25,11 @@ public class MapDestroyer : NetworkBehaviour {
 	public GameObject explosionPrefab;
 
 
+	void Awake()
+	{
+		Debug.Log("Map destroyer awake");
+	}
+
 	void Update()
 	{
 		if(globalFlag != localFlag)

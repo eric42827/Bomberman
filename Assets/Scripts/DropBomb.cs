@@ -10,6 +10,11 @@ public class DropBomb : NetworkBehaviour
     public Tilemap tilemap;
 	public GameObject bombPrefab;
 
+    
+    void Start()
+    {
+        
+    }
     // Update is called once per frame
     void Update()
     {
