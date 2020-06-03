@@ -29,7 +29,7 @@ public class MapDestroyer : NetworkBehaviour {
 	{
 		Debug.Log("Map destroyer awake");
 	}
-
+	/*
 	void Update()
 	{
 		if(globalFlag != localFlag)
@@ -55,6 +55,33 @@ public class MapDestroyer : NetworkBehaviour {
 			localFlag = globalFlag;
 		}
 		
+	}*/
+
+	[ClientRpc]
+	public void RpcExplode(Vector3 cell)
+	{
+		ExplodeCell(cell);
+		ExplodeCell(cell + new Vector3(1, 0, 0));
+		ExplodeCell(cell + new Vector3(2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, 1, 0));
+		ExplodeCell(cell + new Vector3(0, 2, 0));
+		ExplodeCell(cell + new Vector3(-1, 0, 0)); 
+		ExplodeCell(cell + new Vector3(-2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, -1, 0));
+		ExplodeCell(cell + new Vector3(0, -2, 0));
+	}
+
+	public void Explode(Vector3 cell)
+	{
+		ExplodeCell(cell);
+		ExplodeCell(cell + new Vector3(1, 0, 0));
+		ExplodeCell(cell + new Vector3(2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, 1, 0));
+		ExplodeCell(cell + new Vector3(0, 2, 0));
+		ExplodeCell(cell + new Vector3(-1, 0, 0)); 
+		ExplodeCell(cell + new Vector3(-2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, -1, 0));
+		ExplodeCell(cell + new Vector3(0, -2, 0));
 	}
 
 	[Command]
@@ -85,26 +112,24 @@ public class MapDestroyer : NetworkBehaviour {
 		}
 	}
 	
-	bool ExplodeCell(Vector3 cell)
+	void ExplodeCell(Vector3 cell)
 	{
 		Vector3Int floor_cell = Vector3Int.FloorToInt(cell);
+		Vector3 pos = tilemap.GetCellCenterWorld(floor_cell);
 		Tile tile = tilemap.GetTile<Tile>(floor_cell);
 
 		if (tile == wallTile)
 		{
-			return false;
+			return;
 		}
 
+		Instantiate(explosionPrefab, pos, Quaternion.identity);
 		if (tile == destructibleTile)
 		{
 			tilemap.SetTile(floor_cell, null);
 			// ADDED
-			if(isServer)
-			{
-				prevBombLocations.Add(new Vector3Int(floor_cell.x, floor_cell.y, 0));
-			}
 		}
-		return true;
+		return;
 	}
 
 	[Command]

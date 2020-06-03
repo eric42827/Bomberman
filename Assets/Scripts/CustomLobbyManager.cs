@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 
 public class CustomLobbyManager : NetworkLobbyManager
 {
+    private int numSprites = 10;
     /*
     public Tilemap tilemap;
     public int numPlayers = 0;
@@ -44,4 +45,12 @@ public class CustomLobbyManager : NetworkLobbyManager
         Debug.Log(string.Format("Num players: {0}", numPlayers));
     }
     */
+    public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
+    {
+        Debug.Log("lobby to player");
+        Debug.Log(gamePlayer.GetComponent<Player>());
+        int idx = Random.Range(0, numSprites - 1); 
+        gamePlayer.GetComponent<Player>().spriteIdx = idx;
+        return true;
+    }
 }
