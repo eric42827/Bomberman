@@ -64,8 +64,6 @@ public class PlayerDamage : NetworkBehaviour
         {
             Destroy(gameObject);
             NetworkServer.Destroy(gameObject);
-            FindObjectOfType<CustomNetworkManager>().numPlayers -= 1;
-            Debug.Log(string.Format("{0} players left", FindObjectOfType<CustomNetworkManager>().numPlayers));
         }
     }
 }
