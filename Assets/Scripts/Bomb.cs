@@ -21,20 +21,6 @@ public class Bomb : NetworkBehaviour {
 			}
 		}
 	}
-
-	[Command]
-	void CmdDestroyBomb()
-	{
-		Debug.Log("Destroying bomb");
-		if(NetworkServer.active)
-		{
-			Debug.Log("Destroying bomb");
-			FindObjectOfType<MapDestroyer>().RpcExplode(transform.position);
-			Destroy(this.gameObject);
-			NetworkServer.Destroy(this.gameObject);
-		}
-	}
-	
 	
 	void DestroyBomb()
 	{

@@ -12,19 +12,4 @@ public class DestroyExplosion : NetworkBehaviour
     {
         Destroy(this.gameObject, this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length + delay); 
     }
-
-    [Command]
-    void CmdDestroyExplosion() 
-    {
-        if(NetworkServer.active)
-        {
-            Destroy(this.gameObject, this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length + delay); 
-            //NetworkServer.Destroy(this.gameObject);
-        }
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        //Destroy(gameObject);
-    }
 }
