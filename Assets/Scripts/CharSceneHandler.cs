@@ -9,22 +9,23 @@ class CharSceneHandler : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField]
     public int char_id = 0;
-    public string usr_name;
+    public string name;
     public GameObject spriteList;
-    public GameObject lobbyPlayer;
 
     void Start(){
         GameObject.Find("InputName").GetComponent<InputField>().characterLimit = 7;
         Instantiate(spriteList, new Vector3(0, 0, 0), Quaternion.identity);
         setBtnSprite();
     }
+
     public void Update(){
         DisplayName();
     }
+    
     public void OnSelectChar(int idx){
         Debug.Log("In OnSelectChar");
         char_id = idx;
-        lobbyPlayer.GetComponent<LobbyPlayer>().char_id = char_id;
+        FindObjectOfType<CustomLobbyManager>().char_id = char_id;
         GameObject.Find("ChosenChar").GetComponent<Image>().sprite = spriteList.GetComponent<SpriteList>().sprites[char_id];
     }
     public void OnRegister(){
@@ -32,9 +33,9 @@ class CharSceneHandler : MonoBehaviour
         // StaticClass.setPlayerInfo(usr_name, char_id);
     }
     public void DisplayName(){
-        usr_name = GameObject.Find("InputName").GetComponent<InputField>().text;
-        lobbyPlayer.GetComponent<LobbyPlayer>().name = usr_name;
-        GameObject.Find("DisplayName").GetComponent<Text>().text = usr_name;
+        name = GameObject.Find("InputName").GetComponent<InputField>().text;
+        GameObject.Find("DisplayName").GetComponent<Text>().text = name;
+        FindObjectOfType<CustomLobbyManager>().name = name;
     }
     public void setBtnSprite(){
         for (int i = 0 ; i < 15 ; ++i){
