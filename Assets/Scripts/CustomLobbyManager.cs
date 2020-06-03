@@ -11,12 +11,35 @@ public class CustomLobbyManager : NetworkLobbyManager
     public string name;
     public Dictionary<NetworkConnection, GameObject> lobbyPlayers = new Dictionary<NetworkConnection, GameObject>();
     public Dictionary<NetworkConnection, NetworkMessage> playerInfo = new Dictionary<NetworkConnection, NetworkMessage>();
+    public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+
+    private const short PLAYER_INFO = 1;
+    public int numPlayers = 0;
 
     public class NetworkMessage: MessageBase
     {
         public int char_id;
         public string name;
+        //public NetworkConnection conn;
     }
+
+    /*
+    void Start()
+    {
+        if (NetworkServer.active)
+        {
+            //registering the server handler
+            NetworkServer.RegisterHandler(PLAYER_INFO, OnServerMsg);
+        }
+    }
+    
+
+    private void OnServerMsg(NetworkMessage message)
+    {
+        char_id = message.char_id;
+        playerInfo[message.conn] = message;
+    }
+    */
 
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId, NetworkReader extraMessageReader)
     {
@@ -26,6 +49,7 @@ public class CustomLobbyManager : NetworkLobbyManager
         playerInfo[conn] = message;
         //lobbyPlayers[conn].GetComponent<LobbyPlayer>().char_id = message.char_id;
     } 
+    
 
     public override GameObject OnLobbyServerCreateLobbyPlayer(NetworkConnection conn, short playerControllerId)
     {
@@ -48,6 +72,8 @@ public class CustomLobbyManager : NetworkLobbyManager
         //base.OnLobbyClientConnect(conn);
         message.char_id = char_id;
         message.name = name;
+        //message.conn = conn;
+        //NetworkManager.singleton.client.Send(PLAYER_INFO, message);
         ClientScene.AddPlayer(conn, 0, message);
     }
 
@@ -58,6 +84,18 @@ public class CustomLobbyManager : NetworkLobbyManager
        
         gamePlayer.GetComponent<Player>().char_id = lobbyPlayer.GetComponent<LobbyPlayer>().char_id;
         gamePlayer.GetComponent<Player>().name = lobbyPlayer.GetComponent<LobbyPlayer>().name;
+        string uuid = System.Guid.NewGuid().ToString();
+        gamePlayer.GetComponent<Player>().uuid = uuid;
+        players[uuid] = gamePlayer;
         return true;
+    }
+
+    public void removePlayer(GameObject gamePlayer)
+    {
+        players.Remove(gamePlayer.GetComponent<Player>().uuid);
+        if(players.Count == 1)
+        {
+            this.ServerChangeScene("EndScene");
+        }
     }
 }

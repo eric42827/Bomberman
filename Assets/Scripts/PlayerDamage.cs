@@ -64,6 +64,7 @@ public class PlayerDamage : NetworkBehaviour
         {
             Destroy(gameObject);
             NetworkServer.Destroy(gameObject);
+            FindObjectOfType<CustomLobbyManager>().removePlayer(gameObject);
         }
     }
 }

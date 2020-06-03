@@ -13,6 +13,7 @@ class Player : NetworkBehaviour
     public string name;
     [SyncVar(hook = nameof(OnSpriteIndexChanged))]
     public int char_id = -1;
+    public string uuid;
     
     void Start()
     {
