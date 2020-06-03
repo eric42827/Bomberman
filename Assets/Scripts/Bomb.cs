@@ -10,22 +10,38 @@ public class Bomb : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		countdown -= Time.deltaTime;
-		if (countdown <= 0f)
 		{
-			CmdDestroyBomb();
+			countdown -= Time.deltaTime;
+			if (countdown <= 0f)
+			{
+				if(!isClient && isServer)
+				{
+					DestroyBomb();
+				}
+			}
 		}
 	}
 
 	[Command]
 	void CmdDestroyBomb()
 	{
+		Debug.Log("Destroying bomb");
 		if(NetworkServer.active)
 		{
 			Debug.Log("Destroying bomb");
-			FindObjectOfType<MapDestroyer>().CmdExplode(transform.position);
+			FindObjectOfType<MapDestroyer>().RpcExplode(transform.position);
 			Destroy(this.gameObject);
 			NetworkServer.Destroy(this.gameObject);
 		}
+	}
+	
+	
+	void DestroyBomb()
+	{
+		Debug.Log("Destroying bomb");
+		FindObjectOfType<MapDestroyer>().RpcExplode(transform.position); // client rpc
+		FindObjectOfType<MapDestroyer>().Explode(transform.position); // server destroy
+		Destroy(this.gameObject);
+		NetworkServer.Destroy(this.gameObject);
 	}
 }
