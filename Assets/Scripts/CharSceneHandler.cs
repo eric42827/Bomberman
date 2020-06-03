@@ -18,6 +18,11 @@ class CharSceneHandler : MonoBehaviour
         setBtnSprite();
     }
 
+    public void SetEnabled(bool flag)
+    {
+        enabled = flag;
+    }
+    
     public void Update(){
         DisplayName();
     }

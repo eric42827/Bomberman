@@ -42,9 +42,10 @@ public class CustomLobbyManager : NetworkLobbyManager
             GameObject.Find(btn).SetActive(false);
         }
         GameObject.Find("InputName").SetActive(false);
+        GameObject.Find("CharSceneHandler").GetComponent<CharSceneHandler>().SetEnabled(false);
 
         NetworkMessage message = new NetworkMessage();
-        base.OnLobbyClientConnect(conn);
+        //base.OnLobbyClientConnect(conn);
         message.char_id = char_id;
         message.name = name;
         ClientScene.AddPlayer(conn, 0, message);
