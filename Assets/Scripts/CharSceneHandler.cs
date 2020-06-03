@@ -27,6 +27,8 @@ class CharSceneHandler : MonoBehaviour
     public void OnRegister(){
         Debug.Log("In OnRegister");
         // StaticClass.setPlayerInfo(usr_name, char_id);
+        PlayerPrefs.SetString("usrname", usr_name);
+        PlayerPrefs.SetInt("charid", char_id);
         SceneManager.LoadScene("GameRoom");
     }
     public void DisplayName(){
