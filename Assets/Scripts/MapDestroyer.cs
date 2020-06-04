@@ -7,110 +7,79 @@ using UnityEngine.Networking;
 
 public class MapDestroyer : NetworkBehaviour {
 
-	[SyncVar]
-	float destroyX;
-	[SyncVar]
-	float destroyY;
-	[SyncVar]
-	bool globalFlag = false;
-	
-	bool localFlag = false;
-
 	public Tilemap tilemap;
 
 	public Tile wallTile;
 	public Tile destructibleTile;
-	public List<Vector3Int> prevBombLocations; // 
 
 	public GameObject explosionPrefab;
 
-
-	void Update()
+	int[,] map = new int[24, 24];
+	void Awake()
 	{
-		if(globalFlag != localFlag)
+		Debug.Log("Map destroyer awake");
+	}
+	void Start()
+	{
+		for (int x = 0; x < map.GetUpperBound(0); x++)
 		{
-			Vector3 originCell = new Vector3(destroyX, destroyY, 0);
-			ExplodeCell(originCell);
-			if(ExplodeCell(originCell + new Vector3(1, 0, 0)))
+			for (int y = 0; y < map.GetUpperBound(1); y++)
 			{
-				ExplodeCell(originCell + new Vector3(2, 0, 0));
+				int rand = Random.Range(0, 1);
+				if (rand == 1)
+				{
+					tilemap.SetTile(new Vector3Int(-10 + x, -4 + y, 0), destructibleTile);
+				}
+
 			}
-			if(ExplodeCell(originCell + new Vector3(0, 1, 0))) 
-			{
-				ExplodeCell(originCell + new Vector3(0, 2, 0));
-			}
-			if(ExplodeCell(originCell + new Vector3(-1, 0, 0))) 
-			{
-				ExplodeCell(originCell + new Vector3(-2, 0, 0));
-			}
-			if(ExplodeCell(originCell + new Vector3(0, -1, 0))) 
-			{
-				ExplodeCell(originCell + new Vector3(0, -2, 0));
-			}
-			localFlag = globalFlag;
 		}
-		
+
+	}
+	[ClientRpc]
+	public void RpcExplode(Vector3 cell)
+	{
+		ExplodeCell(cell);
+		ExplodeCell(cell + new Vector3(1, 0, 0));
+		ExplodeCell(cell + new Vector3(2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, 1, 0));
+		ExplodeCell(cell + new Vector3(0, 2, 0));
+		ExplodeCell(cell + new Vector3(-1, 0, 0)); 
+		ExplodeCell(cell + new Vector3(-2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, -1, 0));
+		ExplodeCell(cell + new Vector3(0, -2, 0));
 	}
 
-	[Command]
-	public void CmdExplode(Vector2 worldPos)
+	public void Explode(Vector3 cell)
 	{
-		if(NetworkServer.active)
-		{
-			Debug.Log("Inside CmdExplode");
-			Vector3 originCell = tilemap.WorldToCell(worldPos);
-
-			if(isServer)
-			{
-				destroyX = originCell.x;
-				destroyY = originCell.y;
-				globalFlag = !globalFlag;
-				prevBombLocations.Add(new Vector3Int((int)destroyX, (int)destroyY, 0));
-			}
-
-			CmdSpawnExplosion(originCell);
-			CmdSpawnExplosion(originCell + new Vector3(1, 0, 0));
-			CmdSpawnExplosion(originCell + new Vector3(2, 0, 0));
-			CmdSpawnExplosion(originCell + new Vector3(0, 1, 0));
-			CmdSpawnExplosion(originCell + new Vector3(0, 2, 0));
-			CmdSpawnExplosion(originCell + new Vector3(-1, 0, 0));
-			CmdSpawnExplosion(originCell + new Vector3(-2, 0, 0));
-			CmdSpawnExplosion(originCell + new Vector3(0, -1, 0));
-			CmdSpawnExplosion(originCell + new Vector3(0, -2, 0));
-		}
-	}
-	
-	bool ExplodeCell(Vector3 cell)
-	{
-		Vector3Int floor_cell = Vector3Int.FloorToInt(cell);
-		Tile tile = tilemap.GetTile<Tile>(floor_cell);
-
-		if (tile == wallTile)
-		{
-			return false;
-		}
-
-		if (tile == destructibleTile)
-		{
-			tilemap.SetTile(floor_cell, null);
-			// ADDED
-			if(isServer)
-			{
-				prevBombLocations.Add(new Vector3Int(floor_cell.x, floor_cell.y, 0));
-			}
-		}
-		return true;
+		ExplodeCell(cell);
+		ExplodeCell(cell + new Vector3(1, 0, 0));
+		ExplodeCell(cell + new Vector3(2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, 1, 0));
+		ExplodeCell(cell + new Vector3(0, 2, 0));
+		ExplodeCell(cell + new Vector3(-1, 0, 0)); 
+		ExplodeCell(cell + new Vector3(-2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, -1, 0));
+		ExplodeCell(cell + new Vector3(0, -2, 0));
 	}
 
-	[Command]
-	void CmdSpawnExplosion (Vector3 cell)
+
+	void ExplodeCell(Vector3 cell)
 	{
 		Vector3Int floor_cell = Vector3Int.FloorToInt(cell);
 		Vector3 pos = tilemap.GetCellCenterWorld(floor_cell);
 		Tile tile = tilemap.GetTile<Tile>(floor_cell);
 
-		GameObject explosion = Instantiate(explosionPrefab, pos, Quaternion.identity) as GameObject;
-		NetworkServer.Spawn(explosion);
+		if (tile == wallTile)
+		{
+			return;
+		}
+
+		Instantiate(explosionPrefab, pos, Quaternion.identity);
+		if (tile == destructibleTile)
+		{
+			tilemap.SetTile(floor_cell, null);
+			// ADDED
+		}
 		return;
 	}
 
