@@ -14,7 +14,8 @@ public class Bomb : NetworkBehaviour {
 			countdown -= Time.deltaTime;
 			if (countdown <= 0f)
 			{
-				if(!isClient && isServer)
+				//DestroyBomb();
+				if (!isClient && isServer)
 				{
 					DestroyBomb();
 				}
