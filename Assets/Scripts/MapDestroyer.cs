@@ -15,12 +15,14 @@ public class MapDestroyer : NetworkBehaviour {
 	public GameObject explosionPrefab;
 
 	int[,] map = new int[24, 24];
+	
 	void Awake()
 	{
 		Debug.Log("Map destroyer awake");
 
 
 	}
+
 	void Start()
 	{
 		if (!isClient && isServer)
@@ -53,6 +55,22 @@ public class MapDestroyer : NetworkBehaviour {
 			}
 		}*/
 	}
+	
+	/*
+	void Update()
+	{
+		if(isClient)
+		{
+			int rand = Random.Range(0, 10);
+			if(rand == 0)
+			{
+				int x = Random.Range(0, 25);
+				int y = Random.Range(0, 25);
+				tilemap.SetTile(new Vector3Int(-10 + x, -4 + y, 0), destructibleTile);
+			}
+		}
+	}*/
+
 	[ClientRpc]
 	public void RpcBuildMap(int x, int y)
     {
