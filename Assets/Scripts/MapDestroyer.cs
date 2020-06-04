@@ -18,23 +18,49 @@ public class MapDestroyer : NetworkBehaviour {
 	void Awake()
 	{
 		Debug.Log("Map destroyer awake");
+
+
 	}
 	void Start()
 	{
-		for (int x = 0; x < map.GetUpperBound(0); x++)
+		if (!isClient && isServer)
 		{
-			for (int y = 0; y < map.GetUpperBound(1); y++)
+			for (int x = 0; x < 25; x++)
 			{
-				int rand = Random.Range(0, 1);
-				if (rand == 1)
+				for (int y = 0; y < 25; y++)
 				{
-					tilemap.SetTile(new Vector3Int(-10 + x, -4 + y, 0), destructibleTile);
+					int rand = Random.Range(0, 2);
+					if (rand == 1)
+					{
+						Debug.Log("1");
+						tilemap.SetTile(new Vector3Int(-10 + x, -4 + y, 0), destructibleTile);
+						RpcBuildMap(x, y);
+                    }
 				}
-
 			}
 		}
-
+        /*if (isClient)
+        {
+			for (int x = 0; x < 25; x++)
+			{
+				for (int y = 0; y < 25; y++)
+				{
+					if (map[x, y] == 1)
+					{
+						tilemap.SetTile(new Vector3Int(-10 + x, -4 + y, 0), destructibleTile);
+					}
+				}
+			}
+		}*/
 	}
+	[ClientRpc]
+	public void RpcBuildMap(int x, int y)
+    {
+		Debug.Log("1212");
+		//map[x, y] = 1;
+		tilemap.SetTile(new Vector3Int(-10 + x, -4 + y, 0), destructibleTile);
+	}
+
 	[ClientRpc]
 	public void RpcExplode(Vector3 cell)
 	{
