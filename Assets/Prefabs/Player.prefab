@@ -184,19 +184,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: -6877952558757534028}
-  sprites:
-  - {fileID: -6367560908665664636, guid: 3750f45c844123341b9a777a96cb1eca, type: 3}
-  - {fileID: -6367560908665664636, guid: cd947491a13509945aa1b644f9db3ef2, type: 3}
-  - {fileID: -6367560908665664636, guid: d348dff3819df794186a80cb95777629, type: 3}
-  - {fileID: -6367560908665664636, guid: 40de9a8703e2e5a47882b0b86451c741, type: 3}
-  - {fileID: 1605796440420607178, guid: 51065940952b248518ed36f27a80a086, type: 3}
-  - {fileID: 177159673087789770, guid: f6bc9540aeb33418d8a84fd438388e3c, type: 3}
-  - {fileID: 1983179003316544293, guid: 45bb907938fa54a46826edc880f13c3b, type: 3}
-  - {fileID: 603246180932034874, guid: de75d6331f51e477bb116b46f84d9ed6, type: 3}
-  - {fileID: -3177480957025702589, guid: c289210c90ea945ce9e20b312728ce44, type: 3}
-  - {fileID: 754085303044119588, guid: cd7cc8d7baef64cd596bbdad93fa323c, type: 3}
-  numSprites: 10
-  spriteIdx: 0
+  spriteList: {fileID: 7597553366376529330, guid: 5d265b73221be4bfc935924f783c43d1,
+    type: 3}
+  name: 
+  char_id: -1
 --- !u!114 &3645057357451517215
 MonoBehaviour:
   m_ObjectHideFlags: 0
