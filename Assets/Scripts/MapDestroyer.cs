@@ -14,12 +14,27 @@ public class MapDestroyer : NetworkBehaviour {
 
 	public GameObject explosionPrefab;
 
-
+	int[,] map = new int[24, 24];
 	void Awake()
 	{
 		Debug.Log("Map destroyer awake");
 	}
-	
+	void Start()
+	{
+		for (int x = 0; x < map.GetUpperBound(0); x++)
+		{
+			for (int y = 0; y < map.GetUpperBound(1); y++)
+			{
+				int rand = Random.Range(0, 1);
+				if (rand == 1)
+				{
+					tilemap.SetTile(new Vector3Int(-10 + x, -4 + y, 0), destructibleTile);
+				}
+
+			}
+		}
+
+	}
 	[ClientRpc]
 	public void RpcExplode(Vector3 cell)
 	{

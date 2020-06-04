@@ -21,7 +21,7 @@ public class MapRandom : NetworkBehaviour
                 int rand = Random.Range(0, 1);
                 if (rand == 1)
                 {
-                    tilemap.SetTile(new Vector3Int(0+x, 0+y, 0), destructibleTile);
+                    tilemap.SetTile(new Vector3Int(-10+x, -4+y, 0), destructibleTile);
                 }
                 
             }
