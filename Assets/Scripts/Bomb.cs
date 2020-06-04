@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 
 public class Bomb : NetworkBehaviour {
 
-	public float countdown = 10f;
+	public float countdown;
 	
 	// Update is called once per frame
 	void Update () {
