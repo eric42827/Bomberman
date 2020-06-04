@@ -9,14 +9,50 @@ public class DropBomb : NetworkBehaviour
     public Rigidbody2D rb;
     public Tilemap tilemap;
 	public GameObject bombPrefab;
-
+    private int currentBomb;
+    public int MaxBomb;
+    public int currentExplosion;
+    public int MaxExplosion;
+    private float countdown;
+    private bool cool = false;
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown("space") && this.isLocalPlayer)
         {
-            CmdDropBomb();
+            if (currentBomb < MaxBomb)
+            {
+                currentBomb++;
+                CmdDropBomb();
+            } 
         }
+        if (currentBomb == MaxBomb)
+        {
+            if (!cool)
+            {
+                countdown = 5f;
+                cool = true;
+            }
+            else if (cool)
+            {
+                countdown -= Time.deltaTime;
+                if(countdown <= 0f)
+                {
+                    cool = false;
+                    currentBomb = 0;
+                }
+            }
+            
+        }
+    }
+
+    public void AddBomb(int num)
+    {
+        if (this.isLocalPlayer)
+        {
+            MaxBomb += num;
+        }
+
     }
 
     [Command]

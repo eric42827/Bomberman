@@ -116,6 +116,9 @@ MonoBehaviour:
   tilemap: {fileID: 0}
   bombPrefab: {fileID: 4757256243231571591, guid: 696e651fbc6dc9043a3fd699f986084f,
     type: 3}
+  MaxBomb: 5
+  currentExplosion: 0
+  MaxExplosion: 0
 --- !u!114 &3336494925496197065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,6 +208,8 @@ MonoBehaviour:
   healthBar: {fileID: 942850029477154104, guid: 5701d1a99b247464981ac63e84ca1386,
     type: 3}
   healthBarFollow: {fileID: 0}
+  MaxBomb: 0
+  MaxExplosion: 0
 --- !u!212 &-6877952558757534028
 SpriteRenderer:
   m_ObjectHideFlags: 0
