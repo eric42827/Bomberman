@@ -66,7 +66,6 @@ public class MapDestroyer : NetworkBehaviour {
 					{
 						tilemap.SetTile(new Vector3Int(-10 + x, -4 + y, 0), destructibleTile);
 					}
-						
 				}
 			}
 			flag = true;
