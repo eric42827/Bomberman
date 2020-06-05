@@ -21,6 +21,32 @@ class Player : NetworkBehaviour
         GetComponent<DropBomb>().tilemap = FindObjectOfType<MapDestroyer>().tilemap;
     }
 
+    void Update()
+    {
+        var map = FindObjectOfType<MapDestroyer>();
+        if(isServer && !isClient)
+        {
+            enabled = false;
+        }
+        if(this.isLocalPlayer)
+        {
+            if(map.serverSetup)
+            {
+                Debug.Log(map.tilePositions.Count);
+                Debug.Log(map.emptyPositions.Count);
+
+                int idx = UnityEngine.Random.Range(0, map.emptyPositions.Count);
+                int x = (int)(map.emptyPositions[idx] / map.MAP_SIZE) + map.ANCHOR_X;
+                int y = map.emptyPositions[idx] % map.MAP_SIZE + map.ANCHOR_Y;
+                int z = (int)transform.position.z;
+                Vector3Int cell = new Vector3Int(x, y, z);
+                Vector3 cellCenterPos = map.tilemap.GetCellCenterWorld(cell);
+                transform.position = cellCenterPos;
+                enabled = false;
+            }
+        }
+    }
+
     public override void OnStartLocalPlayer()
     {
         Camera.main.GetComponent<CameraFollow>().setTarget(gameObject.transform);
