@@ -20,6 +20,7 @@ public class PlayerMovement : NetworkBehaviour
             movement.y = Input.GetAxisRaw("Vertical");
         }
     }
+    
     void FixedUpdate()
     {
         if(this.isLocalPlayer)
