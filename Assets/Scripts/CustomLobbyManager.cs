@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Networking;
@@ -7,8 +8,12 @@ using UnityEngine.Networking;
 public class CustomLobbyManager : NetworkLobbyManager
 {
     private int numSprites = 15;
+<<<<<<< HEAD
 
     private int m_MaxPlayers = 20; // force
+=======
+    //private int m_MaxPlayers = 20; // force
+>>>>>>> 32138df7b6ef3290055ae25bc889647591aa75ec
     public int char_id;
     public string name;
     public Dictionary<NetworkConnection, GameObject> lobbyPlayers = new Dictionary<NetworkConnection, GameObject>();
@@ -98,6 +103,10 @@ public class CustomLobbyManager : NetworkLobbyManager
         if(players.Count == 1)
         {
             this.ServerChangeScene("EndScene");
+            var player = players.FirstOrDefault().Value;
+            FindObjectOfType<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
+            FindObjectOfType<WinnerInfo>().name = player.GetComponent<Player>().name;
+            DontDestroyOnLoad(FindObjectOfType<WinnerInfo>());
         }
     }
 }
