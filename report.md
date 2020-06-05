@@ -79,6 +79,8 @@ CharSceneHandler 和網路無關，單純是負責處理玩家選取角色，輸
 
 我們針對遊戲場景中的每一個功能，詳細說明我們如何利用 Unity 達到多人連線以及同步的目的，並且解釋如此設計有何優點以及為何可以增加遊戲效能。
 
+![img](./images/game.png)
+
 ### 玩家移動
 
 處理完家移動的邏輯定義在 PlayerMovement （在Player 物件中）中。由於只有 LocalPlayer 有權移動自己（其他玩家單純是 sync 這個玩家的位置）因此我們指定 **LocalPlayerAuthority** 給 PlayerMovement。在每個 frame update 中，PlayerMovement 會偵測玩家有無按下上下左右鍵，並且移動玩家。
@@ -205,4 +207,50 @@ void Update()
 最後兩行很直觀，就是摧毀這個網路中的炸彈物件（不然炸彈位一直累積在網路中，消耗記憶體）。前面兩行是在炸彈摧毀後，要產生爆炸的動畫以及爆炸摧毀地圖中的方塊。至於這邊又看到了一個新的函式開頭：**Rpc**，我們會在下一個段落解釋。
 
 ### 爆炸動畫以及摧毀磚塊
+
+當 Server 呼叫摧毀炸彈後，呼叫了 MapDestroyer 的 Explode 和 RpcExplode。兩個函式在做的事情都是一樣的，就是以炸彈位址作為中心點，十字的產生爆炸：
+
+```c#
+	public void Explode(Vector3 cell)
+	{
+		ExplodeCell(cell);
+		ExplodeCell(cell + new Vector3(1, 0, 0));
+		ExplodeCell(cell + new Vector3(2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, 1, 0));
+		ExplodeCell(cell + new Vector3(0, 2, 0));
+		ExplodeCell(cell + new Vector3(-1, 0, 0)); 
+		ExplodeCell(cell + new Vector3(-2, 0, 0));
+		ExplodeCell(cell + new Vector3(0, -1, 0));
+		ExplodeCell(cell + new Vector3(0, -2, 0));
+	}
+```
+
+ExplodeCell 函式如下。函式會把傳入位置轉換成 tilemap 座標，並且檢查該位置是否可以產生爆炸（如果是牆壁tile 就不行，磚塊 tile 就可以），並把該位置的磚塊 tile 摧毀。
+
+```c#
+	void ExplodeCell(Vector3 cell)
+	{
+		Vector3Int floor_cell = Vector3Int.FloorToInt(cell);
+		Vector3 pos = tilemap.GetCellCenterWorld(floor_cell);
+		Tile tile = tilemap.GetTile<Tile>(floor_cell);
+
+		if (tile == wallTile)
+		{
+			return;
+		}
+
+		Instantiate(explosionPrefab, pos, Quaternion.identity);
+		if (tile == destructibleTile)
+		{
+			tilemap.SetTile(floor_cell, null);
+		}
+		return;
+	}
+```
+
+**Rpc** 開頭的函式代表：**Server 命令 Client 執行函式**，可以想成 **Cmd** 的相反。因此，當 server 呼叫 **RpcExplodeCell**，網路中所有的 client 都會執行 RpcExplodeCell 的函式，分別處理自己的 tilemap 中的爆炸。注意這裡爆炸是 **每個Client獨立處理** 。由於 server 已經讓炸彈的摧毀同步了，因此爆炸效果 client 自己處理就可以達到近乎同步的效果。反之，如果讓 server 處理所有的爆炸，server 的負擔會太重（一個炸彈會造成九個格子爆炸，因此如果讓 server 處理就會多出摧毀炸彈的九倍的負荷）。
+
+這裏的設計就是 client-server trade off 的概念，我們是要讓每個動作都由 server 處理，還是可以犧牲一點點同步性，把一些判斷交給 client 做。這個例子裡面，就是把爆炸效果的計算量轉嫁給 client。
+
+### 血量條
 
