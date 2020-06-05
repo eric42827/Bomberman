@@ -208,7 +208,7 @@ void Update()
 
 ### 爆炸動畫以及摧毀磚塊
 
-當 Server 呼叫摧毀炸彈後，呼叫了 MapDestroyer 的 Explode 和 RpcExplode。兩個函式在做的事情都是一樣的，就是以炸彈位址作為中心點，十字的產生爆炸：
+當 Server 呼叫摧毀炸彈後，呼叫了 MapDestroyer 的 Explode 和 RpcExplode。兩個函式在做的事情都是一樣的，就是以炸彈位址作為中心點，產生十字形的爆炸：
 
 ```c#
 	public void Explode(Vector3 cell)
@@ -252,5 +252,77 @@ ExplodeCell 函式如下。函式會把傳入位置轉換成 tilemap 座標，�
 
 這裏的設計就是 client-server trade off 的概念，我們是要讓每個動作都由 server 處理，還是可以犧牲一點點同步性，把一些判斷交給 client 做。這個例子裡面，就是把爆炸效果的計算量轉嫁給 client。
 
-### 血量條
+### 血量條與扣血
+
+當爆炸產生而玩家碰到爆炸時，玩家的血量會減少。這邊利用的是 collider trigger 的特性，把 explosion 物件加入 trigger 特性，當玩家碰到爆炸時，就會引發玩家呼叫自己的扣血函式。
+
+```c#
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        PlayerDamage player = collision.GetComponent<PlayerDamage>();
+        if (player != null)
+        {
+            player.TakeDamage(1); 
+        }
+    }
+```
+
+玩家扣血是在 PlayerDamage 腳本中被定義的（隸屬 Player 物件）。PlayerDamage 儲存了 maxHealth 和 currentHealth 兩個變數。當呼叫 TakeDamage(damage)，currentHealth 會減少 damage 的量。
+
+```c#
+    public void TakeDamage(int damage)
+    {
+        if(this.isLocalPlayer)
+        {
+            currentHealth -= damage;
+            healthBar.SetHealth(currentHealth);
+        }
+        else
+        {
+            currentHealth -= damage;
+            healthBarFollow.SetHealth(currentHealth);
+        }
+    }
+```
+
+至於血量條的顯示，我們的設計為：
+
+1. 玩家自己的血量條：顯示在左上方。
+2. 其他玩家的血量條：顯示在其他玩家頭頂上。
+
+### 產生道具與撿拾道具
+
+產生道具的腳本是 ItemSpawn（隸屬 Grid 物件）。道具應該是由中央控管，玩家沒有權利自己生成道具。所以在生成道具前需要先該物件是否 isServer，接著呼叫 ItemAdd。
+
+```C#
+    void ItemAdd()
+    {
+        Vector3Int rand = new Vector3Int(Random.Range(-10, 14), Random.Range(-4, 20), 0);
+        Vector3 cellCenterPos = tilemap.GetCellCenterWorld(rand);
+        Tile tile = tilemap.GetTile<Tile>(rand);
+        if(tile== null)
+        {
+            GameObject item = Instantiate(itemPrefab, cellCenterPos, Quaternion.identity);
+            NetworkServer.Spawn(item);
+        }
+
+    }
+```
+
+ItemAdd 中，我們會隨機產生一個 cell position，檢查該位置是否可以放置道具，然後用 NetworkServer 把這些道具 Spawn 到每個玩家的視窗。
+
+玩家撿拾道具和扣血一樣，利用 collider trigger 的特性，就可以知道哪個玩家碰到了道具。接著 trigger 被引發之後，道具就會在 Network 中被摧毀，同時該玩家可以放置的炸彈就會多一個。
+
+```c#
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        DropBomb player = collision.GetComponent<DropBomb>();
+        if (player != null)
+        {
+            player.AddBomb(1);
+        }
+        Destroy(this.gameObject);
+        NetworkServer.Destroy(this.gameObject);
+    }
+```
 

@@ -23,7 +23,7 @@ public class ItemSpawn : NetworkBehaviour
             //若不是Server則跳出
             return;
         }
-        else if (isServer && countdown <= 0f)
+        else if (isServer && !isClient && countdown <= 0f)
         {
             countdown = 0.5f;
             ItemAdd();
