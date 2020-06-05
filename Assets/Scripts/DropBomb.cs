@@ -51,6 +51,8 @@ public class DropBomb : NetworkBehaviour
         if (this.isLocalPlayer)
         {
             MaxBomb += num;
+            cool = false;
+            countdown = 0f;
         }
 
     }
