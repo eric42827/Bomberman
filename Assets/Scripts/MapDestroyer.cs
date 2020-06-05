@@ -71,8 +71,8 @@ public class MapDestroyer : NetworkBehaviour {
 					int y = pos % MAP_SIZE;
 					tilemap.SetTile(new Vector3Int(ANCHOR_X + x, ANCHOR_Y + y, 0), destructibleTile);
 				}
+				enabled = false;
 			}
-			enabled = false;
 		}
 	}
 
