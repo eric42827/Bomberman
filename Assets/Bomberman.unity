@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 437330537}
   - component: {fileID: 437330536}
   - component: {fileID: 437330535}
-  - component: {fileID: 437330534}
   - component: {fileID: 437330538}
   - component: {fileID: 1081588909582670068}
   - component: {fileID: 437330539}
@@ -143,22 +142,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!19719996 &437330534
-TilemapCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 437330533}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_MaximumTileChangeCount: 1000
-  m_ExtrusionFactor: 0.00001
 --- !u!1839735485 &437330535
 Tilemap:
   m_ObjectHideFlags: 0
@@ -280,11 +263,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b180baefb5034a4d88ff53cebad57d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MAP_SIZE: 25
+  ANCHOR_X: -10
+  ANCHOR_Y: -4
   tilemap: {fileID: 2299481161999433545}
   wallTile: {fileID: 11400000, guid: dd221daf9de1c624b82c1f90bda93bae, type: 2}
   destructibleTile: {fileID: 11400000, guid: f5cead61b9ade294eaef2b42ad349148, type: 2}
   explosionPrefab: {fileID: 6355644493449167693, guid: a63ce08cac84eee42b9b623d1704b97c,
     type: 3}
+  serverSetup: 0
 --- !u!114 &437330539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13305,40 +13292,32 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 2299481161999433527}
     m_ColliderPaths:
-    - - X: 170000100
-        Y: -60000041
-      - X: 170000100
-        Y: 230000041
-      - X: 170000041
-        Y: 230000100
-      - X: -120000041
-        Y: 230000100
-      - X: -120000100
-        Y: 230000041
-      - X: -120000100
-        Y: -60000041
-      - X: -120000041
-        Y: -60000100
-      - X: 170000041
-        Y: -60000100
-    - - X: -99999900
-        Y: -39999900
-      - X: -99999900
-        Y: 209999900
-      - X: 149999900
-        Y: 209999900
-      - X: 149999900
-        Y: -39999900
+    - - X: 170000000
+        Y: 230000000
+      - X: -120000000
+        Y: 230000000
+      - X: -120000000
+        Y: -60000000
+      - X: 170000000
+        Y: -60000000
+    - - X: -100000000
+        Y: -40000000
+      - X: -100000000
+        Y: 210000000
+      - X: 150000000
+        Y: 210000000
+      - X: 150000000
+        Y: -40000000
   m_CompositePaths:
     m_Paths:
-    - - {x: 16.999975, y: -6.00001}
-      - {x: 16.999975, y: 23.00001}
-      - {x: -12.00001, y: 22.999975}
-      - {x: -11.999974, y: -6.00001}
-    - - {x: 14.99999, y: -3.999961}
-      - {x: -9.99999, y: -3.999961}
-      - {x: -9.999961, y: 20.99999}
-      - {x: 14.99999, y: 20.99996}
+    - - {x: 16.999971, y: -6}
+      - {x: 16.999971, y: 23}
+      - {x: -12, y: 22.999971}
+      - {x: -11.99997, y: -6}
+    - - {x: 15, y: -3.9999704}
+      - {x: -10, y: -3.9999704}
+      - {x: -9.99997, y: 21}
+      - {x: 15, y: 20.999971}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
 --- !u!1839735485 &2299481161999433545
