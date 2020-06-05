@@ -2961,7 +2961,7 @@ MonoBehaviour:
   - {fileID: 7456659523607061417, guid: 6cfffe2adda5c463ba07ac277bb1b13a, type: 3}
   - {fileID: 5059553572144879312, guid: 8e1b943036f7a374ab0ad8fdb5a20614, type: 3}
   m_CustomConfig: 1
-  m_MaxConnections: 4
+  m_MaxConnections: 20
   m_ConnectionConfig:
     m_PacketSize: 1440
     m_FragmentSize: 500
@@ -3018,7 +3018,7 @@ MonoBehaviour:
   m_ShowLobbyGUI: 1
   m_MaxPlayers: 20
   m_MaxPlayersPerConnection: 1
-  m_MinPlayers: 10
+  m_MinPlayers: 2
   m_LobbyPlayerPrefab: {fileID: 5725919908687484262, guid: 3c23496489f3b45a5839769b77f3098d,
     type: 3}
   m_GamePlayerPrefab: {fileID: 7456659523607061417, guid: 6cfffe2adda5c463ba07ac277bb1b13a,

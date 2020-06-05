@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Networking;
@@ -97,6 +98,10 @@ public class CustomLobbyManager : NetworkLobbyManager
         if(players.Count == 1)
         {
             this.ServerChangeScene("EndScene");
+            var player = players.FirstOrDefault().Value;
+            FindObjectOfType<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
+            FindObjectOfType<WinnerInfo>().name = player.GetComponent<Player>().name;
+            DontDestroyOnLoad(FindObjectOfType<WinnerInfo>());
         }
     }
 }
