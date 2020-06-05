@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 public class CustomLobbyManager : NetworkLobbyManager
 {
     private int numSprites = 15;
-    private int m_MaxPlayers = 20; // force
+    //private int m_MaxPlayers = 20; // force
     public int char_id;
     public string name;
     public Dictionary<NetworkConnection, GameObject> lobbyPlayers = new Dictionary<NetworkConnection, GameObject>();
