@@ -1,3 +1,7 @@
+
+
+
+
 # ICN Final Project Report：Group 33
 
 ## 組員
@@ -325,4 +329,70 @@ ItemAdd 中，我們會隨機產生一個 cell position，檢查該位置是否�
         NetworkServer.Destroy(this.gameObject);
     }
 ```
+
+### 遊戲結束頁面
+
+遊戲從 Bomberman 的佈景（i.e., 主畫面）切換到 EndScene（i.e., 結束頁面）的過程中需要傳送遊戲最後的生存者的圖像與名稱。然而 UNet 架構基本上在 Scene 之間的資料流通並非和資料在 scene 間的 GameObject 那樣容易處理，需要把 GameObject 從原先的 scene 移動到 `DontDestroyOnLoad`，確保切換 Scene 的過程不會將資料刪除。
+
+此外，為了降低 Client 端的負荷量，只有 Server 端紀錄目前存活的玩家資料（`Dictionary<string, GameObject> players` @ CustomLobbyManager.cs）。當炸彈爆炸後會在 `PlayerDamage` 判斷是否死亡，若死亡則呼叫 Unity command function :`CmdDestroyPlayer`，要求 Server 將玩家從存活玩家移除。
+
+```c#
+// PlayerDamage.cs
+[Command]
+  void CmdDestroyPlayer()
+  {
+      if(NetworkServer.active)
+      {
+          Destroy(gameObject);
+          NetworkServer.Destroy(gameObject);
+          FindObjectOfType<CustomLobbyManager>().removePlayer(gameObject);
+      }
+  }
+```
+
+Server 將死亡玩家從 `Players` 中移除。當生存玩家只剩下一位時，Serve 會 Instantiate `WinnerInfo`（i.e., Prefab）紀錄倖存者的資料，並且透過 Spawn 告知所有 Client。
+
+```c#
+// CustomLobbyManager.cs
+public void removePlayer(GameObject gamePlayer)
+    {
+        players.Remove(gamePlayer.GetComponent<Player>().uuid);
+        if(players.Count == 1)
+        {
+            var player = players.FirstOrDefault().Value;
+            GameObject winner = Instantiate(winnerPrefab, new Vector3(0,0,0), Quaternion.identity);
+            winner.GetComponent<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
+            winner.GetComponent<WinnerInfo>().name = player.GetComponent<Player>().name;
+            NetworkServer.Spawn(winner);
+            players.Clear();
+            this.ServerChangeScene("EndScene");
+        }
+    }
+```
+
+為了要再切換 scene 時不被刪除，`WinnerInfo` 必須在產生之後就放入 `DontDestroyOnLoad`。並在 End Scene 中供 `EndSceneHandler` 取值將倖存者資料顯示在 Client 上。
+
+```c#
+// WinnerInfo.cs
+public class WinnerInfo : NetworkBehaviour
+{
+    [SyncVar]
+    public int char_id;
+    [SyncVar]
+    public string name;
+    void Start(){
+        DontDestroyOnLoad(this.gameObject);
+    }
+}
+// EndSceneHandler.cs
+void displayWinner(){
+        char_id = FindObjectOfType<WinnerInfo>().char_id;
+        name = FindObjectOfType<WinnerInfo>().name;
+
+        GameObject.Find("WinnerName").GetComponent<Text>().text = name;
+        GameObject.Find("WinnerSprite").GetComponent<Image>().sprite = spriteList.GetComponent<SpriteList>().sprites[char_id];
+    }
+```
+
+
 
