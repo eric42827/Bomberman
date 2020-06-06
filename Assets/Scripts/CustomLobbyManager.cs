@@ -58,6 +58,7 @@ public class CustomLobbyManager : NetworkLobbyManager
         GameObject lobbyPlayer = (GameObject) Object.Instantiate((Object) this.lobbyPlayerPrefab.gameObject, Vector3.zero, Quaternion.identity);
         Debug.Log(lobbyPlayer);
         lobbyPlayer.GetComponent<LobbyPlayer>().char_id = playerInfo[conn].char_id;
+        lobbyPlayer.GetComponent<LobbyPlayer>().name = playerInfo[conn].name;
         return lobbyPlayer;
     }
 
@@ -102,6 +103,9 @@ public class CustomLobbyManager : NetworkLobbyManager
             FindObjectOfType<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
             FindObjectOfType<WinnerInfo>().name = player.GetComponent<Player>().name;
             DontDestroyOnLoad(FindObjectOfType<WinnerInfo>());
+            Debug.Log("@ removePlayer");
+            Debug.Log(FindObjectOfType<WinnerInfo>().char_id);
+            Debug.Log(FindObjectOfType<WinnerInfo>().name);
         }
     }
 }
