@@ -11,6 +11,7 @@ public class CustomLobbyManager : NetworkLobbyManager
     //private int m_MaxPlayers = 20; // force
     public int char_id;
     public string name;
+    public GameObject winnerPrefab;
     public Dictionary<NetworkConnection, GameObject> lobbyPlayers = new Dictionary<NetworkConnection, GameObject>();
     public Dictionary<NetworkConnection, NetworkMessage> playerInfo = new Dictionary<NetworkConnection, NetworkMessage>();
     public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
@@ -99,12 +100,11 @@ public class CustomLobbyManager : NetworkLobbyManager
         if(players.Count == 1)
         {
             var player = players.FirstOrDefault().Value;
-            FindObjectOfType<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
-            FindObjectOfType<WinnerInfo>().name = player.GetComponent<Player>().name;
-            DontDestroyOnLoad(FindObjectOfType<WinnerInfo>());
-            Debug.Log("@ removePlayer");
-            Debug.Log(FindObjectOfType<WinnerInfo>().char_id);
-            Debug.Log(FindObjectOfType<WinnerInfo>().name);
+            GameObject winner = Instantiate(winnerPrefab, new Vector3(0,0,0), Quaternion.identity);
+            winner.GetComponent<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
+            winner.GetComponent<WinnerInfo>().name = player.GetComponent<Player>().name;
+            NetworkServer.Spawn(winner);
+            players.Clear();
             this.ServerChangeScene("EndScene");
         }
     }

@@ -2960,6 +2960,7 @@ MonoBehaviour:
   - {fileID: 6355644493449167693, guid: a63ce08cac84eee42b9b623d1704b97c, type: 3}
   - {fileID: 7456659523607061417, guid: 6cfffe2adda5c463ba07ac277bb1b13a, type: 3}
   - {fileID: 5059553572144879312, guid: 8e1b943036f7a374ab0ad8fdb5a20614, type: 3}
+  - {fileID: 8855183298059184704, guid: 30737b78b8bca491eabec652a83c8b47, type: 3}
   m_CustomConfig: 1
   m_MaxConnections: 20
   m_ConnectionConfig:
@@ -3028,6 +3029,8 @@ MonoBehaviour:
   lobbySlots: []
   char_id: 0
   name: 
+  winnerPrefab: {fileID: 8855183298059184704, guid: 30737b78b8bca491eabec652a83c8b47,
+    type: 3}
   numPlayers: 0
 --- !u!114 &347869176303985439
 MonoBehaviour:

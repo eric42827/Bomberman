@@ -11,6 +11,7 @@ public class EndSceneHandler : MonoBehaviour
     
     // Start is called before the first frame update
     void Start(){
+        Debug.Log("@ Start");
         Instantiate(spriteList, new Vector3(0,0,0), Quaternion.identity);
         displayWinner();
     }
@@ -20,8 +21,10 @@ public class EndSceneHandler : MonoBehaviour
         
     }
     void displayWinner(){
+        Debug.Log("@ DisplayWinner");
         char_id = FindObjectOfType<WinnerInfo>().char_id;
         name = FindObjectOfType<WinnerInfo>().name;
+        Debug.Log("Name: "+name);
         GameObject.Find("WinnerName").GetComponent<Text>().text = name;
         GameObject.Find("WinnerSprite").GetComponent<Image>().sprite = spriteList.GetComponent<SpriteList>().sprites[char_id];
     }
