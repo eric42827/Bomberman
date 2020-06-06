@@ -8,15 +8,4 @@ public class WinnerInfo : NetworkBehaviour
     public int char_id;
     [SyncVar]
     public string name;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

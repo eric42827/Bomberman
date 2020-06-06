@@ -11,7 +11,7 @@
 ## 目錄
 
 1. 遊戲介紹與功能
-2. 遊戲架構
+2. 遊戲架構與程式架構
 3. 開發邏輯與優化設計
 4. 分工
 
@@ -30,7 +30,7 @@
    2. 玩家選擇角色與名字
    3. 隨機生成遊戲地圖
 
-## 遊戲架構
+## 遊戲架構與程式架構
 
 首先，這份遊戲是我們 **從頭開始** 製作。我們沒有使用單人模板，從 0 開始，最終成為可以支援多項功能，內容完善的多人遊戲。
 
@@ -80,6 +80,36 @@ CharSceneHandler 和網路無關，單純是負責處理玩家選取角色，輸
 我們針對遊戲場景中的每一個功能，詳細說明我們如何利用 Unity 達到多人連線以及同步的目的，並且解釋如此設計有何優點以及為何可以增加遊戲效能。
 
 ![img](./images/game.png)
+
+### 遊戲開始
+
+由於 CustomLobbyManager 是處理整個遊戲的網路邏輯，因此我們把重要的玩家資訊記錄在 CustomLobbyManager 裡面。其中，當玩家被創建時，我們會把這些玩家存在一個 Dictionary 裡面。
+
+Dictionary 定義：
+
+```c#
+public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+```
+
+玩家進入遊戲畫面：
+
+```c#
+    public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
+    {
+        Debug.Log(lobbyPlayer.GetComponent<LobbyPlayer>());
+       
+        gamePlayer.GetComponent<Player>().char_id = lobbyPlayer.GetComponent<LobbyPlayer>().char_id;
+        gamePlayer.GetComponent<Player>().name = lobbyPlayer.GetComponent<LobbyPlayer>().name;
+        string uuid = System.Guid.NewGuid().ToString();
+        gamePlayer.GetComponent<Player>().uuid = uuid;
+        players[uuid] = gamePlayer; // Add player to dict
+        return true;
+    }
+```
+
+從最後一行可以看出，我們指定每個玩家一個獨一無二的 id ，然後以這個 id 當成 key，把玩家物件加入 Dictionary 中。
+
+至於玩家生成的位置由於和地圖有關，我們會在 **產生地圖** 中說明。
 
 ### 玩家移動
 
@@ -290,6 +320,29 @@ ExplodeCell 函式如下。函式會把傳入位置轉換成 tilemap 座標，�
 1. 玩家自己的血量條：顯示在左上方。
 2. 其他玩家的血量條：顯示在其他玩家頭頂上。
 
+![img](./images/healthbar.png)
+
+玩家物件和遊戲畫面分別都有一個 HealthBar Canvas。我們只需要在遊戲開始用 isLocalPlayer 來判斷要顯示哪個 canvas 就好了。
+
+```c#
+    void Start()
+    {
+        currentHealth = maxHealth;
+      // Large HealthBar
+        if(this.isLocalPlayer)
+        {
+            healthBar.SetMaxHealth(maxHealth);
+            transform.GetChild(0).gameObject.SetActive(false); // disable healthbar canvas for local
+        }
+        // Small HealthBar
+        else
+        {
+            healthBarFollow = transform.GetChild(0).transform.GetChild(0).GetComponent<HealthBar>();
+            healthBarFollow.SetMaxHealth(maxHealth);
+        }
+    }
+```
+
 ### 產生道具與撿拾道具
 
 產生道具的腳本是 ItemSpawn（隸屬 Grid 物件）。道具應該是由中央控管，玩家沒有權利自己生成道具。所以在生成道具前需要先該物件是否 isServer，接著呼叫 ItemAdd。
@@ -325,4 +378,144 @@ ItemAdd 中，我們會隨機產生一個 cell position，檢查該位置是否�
         NetworkServer.Destroy(this.gameObject);
     }
 ```
+
+### 產生地圖
+
+產生地圖定義在 MapDestroyer 中。我們先定義兩個 **SyncList**，紀錄生成磚塊的位置，以及不是磚塊的位置。由於定義為 SyncList，網路中的所有玩家都會同步裡面的資料
+
+```C#
+public SyncListInt tilePositions = new SyncListInt();
+public SyncListInt emptyPositions = new SyncListInt();
+```
+
+在遊戲開始時，**Server** 上的MapDestroyer 的 Start 函式中會生成地圖：
+
+```c#
+	void Start()
+	{
+		if (!isClient && isServer)
+		{
+			// Generate Map Logic ... 
+			serverSetup = true;
+		}
+	}
+```
+
+玩家開始遊戲時會持續檢查 serverSetup，看看 server 是否已經生成好地圖了。當 server 生成好地圖後，玩家就會利用 tilePositions 中同步的資料來產生一樣的地圖。
+
+```c#
+	void Update()
+    {
+		if(serverSetup)
+		{
+			if (isClient)
+			{
+				foreach(int pos in tilePositions)
+				{
+					int x = (int)(pos / MAP_SIZE);
+					int y = pos % MAP_SIZE;
+					tilemap.SetTile(new Vector3Int(ANCHOR_X + x, ANCHOR_Y + y, 0), destructibleTile);
+				}
+				enabled = false; // 設定完地圖就不需要再執行 update
+			}
+		}
+	}
+```
+
+注意這邊我們傳輸的資料單純只是生成磚塊的位置，讓玩家自己去生成地圖。當然，也可以讓 Server 產生後去呼叫 NetworkServer.Spawn ，但跟傳送 int 型態（我們的寫法）比起來，server 負擔顯然還是較重，所以我們就選擇同步位置資訊就好。
+
+接著我們會把玩家的位址隨機指定成 emptyPositions 中的某些位置（定義在 Player 中）：
+
+```c#
+    void Update()
+    {
+        var map = FindObjectOfType<MapDestroyer>();
+        if(isServer && !isClient)
+        {
+            enabled = false;
+        }
+        if(this.isLocalPlayer)
+        {
+            if(map.serverSetup)
+            {
+                Debug.Log(map.tilePositions.Count);
+                Debug.Log(map.emptyPositions.Count);
+
+                int idx = UnityEngine.Random.Range(0, map.emptyPositions.Count);
+                int x = (int)(map.emptyPositions[idx] / map.MAP_SIZE) + map.ANCHOR_X;
+                int y = map.emptyPositions[idx] % map.MAP_SIZE + map.ANCHOR_Y;
+                int z = (int)transform.position.z;
+                Vector3Int cell = new Vector3Int(x, y, z);
+                Vector3 cellCenterPos = map.tilemap.GetCellCenterWorld(cell);
+                transform.position = cellCenterPos;
+                enabled = false;
+            }
+        }
+    }
+```
+
+
+
+### 玩家死亡與遊戲結束
+
+玩家死亡定義在 PlayerDamage 中。玩家的血被扣到沒有的時候，玩家就會呼叫 **Cmd** 函式，指定 Server 摧毀玩家物件。
+
+```c#
+    void Update()
+    {
+        if (this.isLocalPlayer && healthBar.GetHealth() <= 0)
+        {
+            CmdDestroyPlayer(); 
+            
+        }
+    }
+```
+
+下面的 **CmdDestroyPlayer** 函式只會在 server 上執行：
+
+```c#
+    [Command]
+    void CmdDestroyPlayer()
+    {
+        if(NetworkServer.active)
+        {
+            Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
+            FindObjectOfType<CustomLobbyManager>().removePlayer(gameObject);
+        }
+    }
+```
+
+NetworkServer.Destroy 會把整個網路中的同一個玩家物件都摧毀。最後，我們會呼叫 Server 上的 CustomLobbyManager 的 removePlayer函式，也就是把玩家從一開始定義的 player Dictionary 移除：
+
+```c#
+    public void removePlayer(GameObject gamePlayer)
+    {
+        players.Remove(gamePlayer.GetComponent<Player>().uuid);
+        if(players.Count == 1)
+        {
+            var player = players.FirstOrDefault().Value;
+            FindObjectOfType<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
+            FindObjectOfType<WinnerInfo>().name = player.GetComponent<Player>().name;
+            DontDestroyOnLoad(FindObjectOfType<WinnerInfo>());
+            this.ServerChangeScene("EndScene");
+        }
+    }
+```
+
+由上圖可知，當整個遊戲只剩下一個玩家時，遊戲就會結束。我們在 GameScene 裡面定義了一個 WinnerInfo 的物件，裡面存了贏家的資訊（角色 id，玩家名稱）：
+
+```c#
+public class WinnerInfo : NetworkBehaviour
+{
+    [SyncVar]
+    public int char_id;
+    [SyncVar]
+    public string name;
+}
+```
+
+注意我們把變數指定成 SyncVar，代表在每個玩家的視窗中這些值都會自動同步。
+
+當遊戲結束切換到 EndScene，我們設定 WinnerInfo 物件成 DontDestroyOnLoad，因此換場景時 WinnerInfo 物件不會被摧毀，這樣贏家的資訊就可以成功的傳到 EndScene。
 

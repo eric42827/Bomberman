@@ -97,11 +97,11 @@ public class CustomLobbyManager : NetworkLobbyManager
         players.Remove(gamePlayer.GetComponent<Player>().uuid);
         if(players.Count == 1)
         {
-            this.ServerChangeScene("EndScene");
             var player = players.FirstOrDefault().Value;
             FindObjectOfType<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
             FindObjectOfType<WinnerInfo>().name = player.GetComponent<Player>().name;
             DontDestroyOnLoad(FindObjectOfType<WinnerInfo>());
+            this.ServerChangeScene("EndScene");
         }
     }
 }

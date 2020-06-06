@@ -31,13 +31,8 @@ public class PlayerDamage : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TakeDamage(1);
-        }*/
         if (this.isLocalPlayer && healthBar.GetHealth() <= 0)
         {
-            //Debug.Log("Dead");
             CmdDestroyPlayer();
             
         }
