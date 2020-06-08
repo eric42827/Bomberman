@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 
 public class CustomLobbyManager : NetworkLobbyManager
 {
+    public GameObject winnerPrefab;
     private int numSprites = 15;
     private int m_MaxPlayers = 20; // force
 
@@ -98,11 +99,13 @@ public class CustomLobbyManager : NetworkLobbyManager
         players.Remove(gamePlayer.GetComponent<Player>().uuid);
         if(players.Count == 1)
         {
-            this.ServerChangeScene("EndScene");
             var player = players.FirstOrDefault().Value;
-            FindObjectOfType<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
-            FindObjectOfType<WinnerInfo>().name = player.GetComponent<Player>().name;
-            DontDestroyOnLoad(FindObjectOfType<WinnerInfo>());
+            GameObject winner = Instantiate(winnerPrefab);
+            winner.GetComponent<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
+            winner.GetComponent<WinnerInfo>().name = player.GetComponent<Player>().name;
+            NetworkServer.Spawn(winner);
+            DontDestroyOnLoad(winner);
+            this.ServerChangeScene("EndScene");
         }
     }
 }
