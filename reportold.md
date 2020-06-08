@@ -10,40 +10,35 @@
 
 ## 目錄
 
-1. 前言
-2. 遊戲架構
-3. 網路優化
-4. 程式開發
-5. 分工
+1. 遊戲介紹與功能
+2. 程式架構
+3. 開發邏輯與優化設計
+4. 分工
 
-## 前言
+## 遊戲介紹與功能
 
-在這次電網導Final Project當中，我們實作了經典遊戲—Bomberman。玩家透過放置炸彈以及拾取道具來消滅敵人，當成為場上最後的玩家即勝利。
+我們的爆爆王多人遊戲支援以下功能：
 
-這份遊戲是我們 **從頭開始** 製作。我們沒有使用單人模板，從 0 開始，最終成為可以支援多項功能，內容完善的多人遊戲。我們的爆爆王支援以下功能：
+1. 基礎爆爆王遊戲功能
+   1. 玩家上下左右鍵移動
+   2. 玩家空白鍵投放炸彈
+   3. 炸彈計時爆炸摧毀方塊
+   4. 玩家血量控制
+   5. 地圖上隨機生成道具
+2. 進階遊戲功能
+   1. 連線頁面（Lobby Scene）控制連線人數
+   2. 玩家選擇角色與名字
+   3. 隨機生成遊戲地圖
 
-### 基礎爆爆王遊戲功能
-1. 上下左右鍵移動
-2. 空白鍵投放炸彈
-3. 炸彈計時爆炸摧毀地圖方塊
-4. 血量控制
-5. 炸彈放置數量控制
-### 進階遊戲功能
-1. 控制連線人數(2~11人皆可開始遊戲)
-2. 等候室（Lobby Scene）讓玩家準備
-3. 自由選擇角色與名字
-4. 隨機生成遊戲地圖
-5. 隨機生成道具
+## 遊戲架構與程式架構
 
-下一部分，我們會詳述遊戲的整體架構，並包含流程圖輔以文字，能夠更清楚瞭解Server和Client分別處理那些工作。
+首先，這份遊戲是我們 **從頭開始** 製作。我們沒有使用單人模板，從 0 開始，最終成為可以支援多項功能，內容完善的多人遊戲。
 
-## 遊戲架構
+上述每一項功能中的資料傳輸都與多人連線結合，我們花了許多心思設計資料傳輸的架構及邏輯。下圖是遊戲的網路架構，以及各個遊戲場景中的遊戲元素。
 
-上述提到每一項功能中的資料傳輸都與多人連線結合，我們花了許多心思設計資料傳輸的架構及邏輯。以下部分是遊戲的網路架構，以及各個遊戲場景中的遊戲元素。
+我們的遊戲由兩個 Scene 組成，分別是 Lobby 和 Game Scene。Lobby 就是玩家選擇角色並且等待的頁面，而Game Scene 就是實際遊戲的頁面。下面分別介紹兩個 Scene 的架構，以及 Scene 間如何切換。圖中的虛線箭頭代表資料傳輸的方向。
 
-我們的遊戲由兩個 Scene 組成，分別是 Lobby 和 Game Scene。Lobby Scene 為玩家選擇角色並且等待的頁面，而Game Scene 則是實際遊戲的頁面。下面分別介紹兩個 Scene 的架構，以及 Scene 間如何切換。圖中的虛線箭頭代表資料傳輸的方向。
-
-### Lobby Scene
+### 連線頁面
 
 ![img](./images/lobby.png)
 
@@ -52,9 +47,9 @@
 1. CharSceneHandler
 2. CustomLobbyManager
 
-CharSceneHandler 和網路無關，單純是負責處理玩家選取角色，輸入名稱的物件。當玩家選完角色，可以點選LAN Client，就會連線到 Server，這時 CustomLobbyManager （Client）就會抓取 CharSceneHandler 中玩家的角色資訊，並且傳送 Network Message 給 CustomLobbyManager (Server)。
+CharSceneHandler 和網路無關，單純是負責處理玩家選取角色，輸入名稱的物件。當玩家選完角色，可以點選 Client，就會連線到 Server，這時 CustomLobbyManager （Client）就會抓取 CharSceneHandler 中玩家的角色資訊，並且傳送 Network Message 給 Server。
 
-切換到Lobby後，當玩家點選 Start ，代表準備完畢。等到超過 minPlayers（可以自己設定的參數）的玩家連線並且都準備完畢，Server 上的 CustomLobbyManager 就會在所有玩家的頁面 Spawn 出 Player Object，並且告訴玩家要切換 Scene 到 GameScene，開始遊戲。
+玩家點選 Ready 以後，就會進入等待，直到連線的人數大於等於 minPlayers （可以自己設定的參數）。當超過 minPlayers 的玩家連線以後，Server 上的 CustomLobbyManager 就會在所有玩家的頁面 Spawn 出 Player Object，並且告訴玩家要切換 Scene 到 GameScene，開始遊戲。
 
 ### 場景切換
 
@@ -62,7 +57,7 @@ CharSceneHandler 和網路無關，單純是負責處理玩家選取角色，輸
 
 當足夠玩家連線後，Server 的 CustomLobbyManager 就會叫玩家把 Scene 都換成 GameScene。注意 CustomLobbyManager 是繼承 NetworkManager，並且我們將他設定了 DontDestroyOnLoad 的特性，代表 CustomLobbyManager 進入 GameScene 不會被摧毀，並且繼續擔任 NetworkManager，負責所有資料的傳輸。
 
-### Game Scene
+### 遊戲場景
 
 ![img](./images/game.png)
 
@@ -76,14 +71,15 @@ CharSceneHandler 和網路無關，單純是負責處理玩家選取角色，輸
 
 1. Bomb：炸彈
 2. Explosion：爆炸動畫
-3. Item：道具，增加玩家炸彈數量上限
-4. Destructable Tile：隨機生成並可被炸彈摧毀的方塊
+3. Item：道具
 
 在下一個章節，我們會詳細介紹這些元素如何利用網路互相溝通。
 
 ## 開發邏輯與優化設計
 
 我們針對遊戲場景中的每一個功能，詳細說明我們如何利用 Unity 達到多人連線以及同步的目的，並且解釋如此設計有何優點以及為何可以增加遊戲效能。
+
+![img](./images/game.png)
 
 ### 遊戲開始
 
