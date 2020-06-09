@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Networking;
 
 public class CustomLobbyManager : NetworkLobbyManager
 {
+    public GameObject winnerPrefab;
     private int numSprites = 15;
+    private int m_MaxPlayers = 20; // force
+
     public int char_id;
     public string name;
     public Dictionary<NetworkConnection, GameObject> lobbyPlayers = new Dictionary<NetworkConnection, GameObject>();
@@ -95,6 +99,12 @@ public class CustomLobbyManager : NetworkLobbyManager
         players.Remove(gamePlayer.GetComponent<Player>().uuid);
         if(players.Count == 1)
         {
+            var player = players.FirstOrDefault().Value;
+            GameObject winner = Instantiate(winnerPrefab);
+            winner.GetComponent<WinnerInfo>().char_id = player.GetComponent<Player>().char_id;
+            winner.GetComponent<WinnerInfo>().name = player.GetComponent<Player>().name;
+            NetworkServer.Spawn(winner);
+            DontDestroyOnLoad(winner);
             this.ServerChangeScene("EndScene");
         }
     }
