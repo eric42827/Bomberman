@@ -12,7 +12,7 @@ public class ItemSpawn : NetworkBehaviour
 
     void Start()
     {
-        countdown = 0.5f;
+        countdown = 3f;
     }
 
     // Update is called once per frame
@@ -25,7 +25,7 @@ public class ItemSpawn : NetworkBehaviour
         }
         else if (isServer && !isClient && countdown <= 0f)
         {
-            countdown = 0.5f;
+            countdown = 3f;
             ItemAdd();
         }
         else
@@ -44,6 +44,10 @@ public class ItemSpawn : NetworkBehaviour
         {
             GameObject item = Instantiate(itemPrefab, cellCenterPos, Quaternion.identity);
             NetworkServer.Spawn(item);
+        }
+        else
+        {
+            ItemAdd();
         }
 
     }
