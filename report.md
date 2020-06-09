@@ -18,22 +18,69 @@
 
 ## 前言
 
+### [影片DEMO](https://youtu.be/6v4whwohpU0)
+
 在這次電網導Final Project當中，我們實作了經典遊戲—Bomberman。玩家透過放置炸彈以及拾取道具來消滅敵人，當成為場上最後的玩家即勝利。
 
 這份遊戲是我們 **從頭開始** 製作。我們沒有使用單人模板，從 0 開始，最終成為可以支援多項功能，內容完善的多人遊戲。我們的爆爆王支援以下功能：
 
 ### 基礎爆爆王遊戲功能
 1. 上下左右鍵移動
+
+![move1](./images/move1.jpg)
+
+![move2](./images/move2.jpg)
+
 2. 空白鍵投放炸彈
+
+![bomb1](./images/bomb1.jpg)
+
 3. 炸彈計時爆炸摧毀地圖方塊
+
+![explosion](./images/explosion.jpg)
+
 4. 血量控制
-5. 炸彈放置數量控制
+
+![](./images/damage.jpg)
+
+![](./images/damage2.jpg)
+
+5. 觀看其他玩家血量
+
+![img](./images/healthbar.png)
+
+6. 炸彈放置數量控制
+
+![](./images/num.jpg)
+
 ### 進階遊戲功能
 1. 控制連線人數(2~11人皆可開始遊戲)
+
+- 兩人連線
+
+![](./images/lobby.jpg)
+
+- 十一人連線
+
+![](./images/lobby11.jpg)
+
 2. 等候室（Lobby Scene）讓玩家準備
+
+- 按下Start表示準備完畢，同時也可觀看其他玩家準備狀態
+
+![](./images/ready.jpg)
+
 3. 自由選擇角色與名字
+
+![](./images/select.jpg)
+
 4. 隨機生成遊戲地圖
+
+![](./images/map.jpg)
+
 5. 隨機生成道具
+
+![](./images/item.jpg)
 
 下一部分，我們會詳述遊戲的整體架構，並包含流程圖輔以文字，能夠更清楚瞭解Server和Client分別處理那些工作。
 
