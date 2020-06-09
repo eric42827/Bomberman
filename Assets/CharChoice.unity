@@ -3016,7 +3016,7 @@ MonoBehaviour:
   isNetworkActive: 0
   matchMaker: {fileID: 0}
   m_ShowLobbyGUI: 1
-  m_MaxPlayers: 11
+  m_MaxPlayers: 20
   m_MaxPlayersPerConnection: 1
   m_MinPlayers: 2
   m_LobbyPlayerPrefab: {fileID: 5725919908687484262, guid: 3c23496489f3b45a5839769b77f3098d,
