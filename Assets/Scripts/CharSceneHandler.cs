@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -8,12 +9,16 @@ class CharSceneHandler : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField]
+    
     public int char_id = 0;
     public string name;
     public GameObject spriteList;
+    public string[] names;
 
     void Start(){
-        GameObject.Find("InputName").GetComponent<InputField>().characterLimit = 7;
+        GameObject.Find("InputName").SetActive(false);
+        names = new string [15] { "Mask", "Frog", "Pink", "Blue", "Purple", "Pumpkin", "Skeleton", "Soldier", "White ghost", "Alien", "Black ghost", "Prince", "Princess", "Blue ghost", "Evil man" };
+        //GameObject.Find("InputName").GetComponent<InputField>().characterLimit = 7;
         Instantiate(spriteList, new Vector3(0, 0, 0), Quaternion.identity);
         setBtnSprite();
     }
@@ -24,13 +29,17 @@ class CharSceneHandler : MonoBehaviour
     }
     
     public void Update(){
-        DisplayName();
+        //DisplayName();
     }
     
     public void OnSelectChar(int idx){
         Debug.Log("In OnSelectChar");
+        Debug.Log(idx);
+        Debug.Log(names.Length);
+
         char_id = idx;
         FindObjectOfType<CustomLobbyManager>().char_id = char_id;
+        GameObject.Find("DisplayName").GetComponent<Text>().text = names[idx];
         GameObject.Find("ChosenChar").GetComponent<Image>().sprite = spriteList.GetComponent<SpriteList>().sprites[char_id];
     }
     public void OnRegister(){
