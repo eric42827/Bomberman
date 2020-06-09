@@ -69,7 +69,7 @@ public class CustomLobbyManager : NetworkLobbyManager
             string btn = "Button"+i;
             GameObject.Find(btn).SetActive(false);
         }
-        GameObject.Find("InputName").SetActive(false);
+        //GameObject.Find("InputName").SetActive(false);
         GameObject.Find("CharSceneHandler").GetComponent<CharSceneHandler>().SetEnabled(false);
 
         NetworkMessage message = new NetworkMessage();
