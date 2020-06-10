@@ -53,6 +53,7 @@ public class DropBomb : NetworkBehaviour
             MaxBomb += num;
             cool = false;
             countdown = 0f;
+            currentBomb = 0;
         }
 
     }

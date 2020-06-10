@@ -12,7 +12,7 @@ public class ItemSpawn : NetworkBehaviour
 
     void Start()
     {
-        countdown = 3f;
+        countdown = 1.5f;
     }
 
     // Update is called once per frame
@@ -25,7 +25,7 @@ public class ItemSpawn : NetworkBehaviour
         }
         else if (isServer && !isClient && countdown <= 0f)
         {
-            countdown = 3f;
+            countdown = 1.5f;
             ItemAdd();
         }
         else
