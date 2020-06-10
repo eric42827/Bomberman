@@ -18,19 +18,19 @@
 
 ### Unzip Files
 
-![image-20200610172141073](C:\Users\Eric42827\AppData\Roaming\Typora\typora-user-images\image-20200610172141073.png)
+![image-20200610172141073](./images/readme1.png)
 
 ### Click `Bomberman.exe`
 
-![image-20200610172350381](C:\Users\Eric42827\AppData\Roaming\Typora\typora-user-images\image-20200610172350381.png)
+![image-20200610172350381](./images/readme2.png)
 
 ### Select Your Character
 
- ![image-20200610172552811](C:\Users\Eric42827\AppData\Roaming\Typora\typora-user-images\image-20200610172552811.png)
+ ![image-20200610172552811](./images/readme3.png)
 
 ### Connect to Server
 
-![image-20200610172700803](C:\Users\Eric42827\AppData\Roaming\Typora\typora-user-images\image-20200610172700803.png)
+![image-20200610172700803](./images/readme4.png)
 
 ### Click Start
 
