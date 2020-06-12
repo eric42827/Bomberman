@@ -38,7 +38,7 @@
 
 ### Click Start
 
-![image-20200610172755505](C:\Users\Eric42827\AppData\Roaming\Typora\typora-user-images\image-20200610172755505.png)
+![image-20200610172755505](./images/start.png)
 
 ## 指令介紹
 - WASD or 上下左右:移動
