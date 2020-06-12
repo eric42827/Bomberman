@@ -1,5 +1,5 @@
 # Bomberman 
-
+## **程式碼在Assets/Scripts裡面**
 ## Group 33
 
 | 姓名   | 學號      | 系級   |
