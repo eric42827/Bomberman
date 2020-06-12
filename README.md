@@ -20,15 +20,19 @@
 
 ![image-20200610172141073](./images/readme1.png)
 
-### Click `Bomberman.exe`
+### Open Server
+- Click `Bomberman.exe`
+- Click "LAN Server Only"
 
+### Open Client(2~11 players can start the game)
+- Click `Bomberman.exe`
 ![image-20200610172350381](./images/readme2.png)
 
 ### Select Your Character
 
  ![image-20200610172552811](./images/readme3.png)
 
-### Connect to Server
+### Connect to Server()(if you're localhost，then click "LAN Client" directly)
 
 ![image-20200610172700803](./images/readme4.png)
 
