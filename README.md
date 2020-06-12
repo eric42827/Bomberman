@@ -1,5 +1,6 @@
 # Bomberman 
 ## **程式碼在Assets/Scripts裡面**
+
 ## Group 33
 
 | 姓名   | 學號      | 系級   |
@@ -16,7 +17,7 @@
 這份遊戲是我們 **從頭開始** 製作。我們沒有使用單人模板，從 0 開始，最終成為可以支援多項功能，內容完善的多人遊戲。以下將會說明如何遊玩以及遊戲特色：
 ## How to Play
 
-### Unzip Files
+### "Unzip Files" or "Build and Run"
 
 ![image-20200610172141073](./images/readme1.png)
 
@@ -25,7 +26,7 @@
 - Click "LAN Server Only"
 
 ### Open Client(2~11 players can start the game)
-- Click `Bomberman.exe`
+- Click `Bomberman.exe`(2~11個)
 ![image-20200610172350381](./images/readme2.png)
 
 ### Select Your Character
